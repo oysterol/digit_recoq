@@ -4,9 +4,10 @@ import matplotlib.pyplot as plt
 from Neural_network import define_Neural_network
 from Letter_recogn_frame import *
 import csv
+import numpy as np
 
 #print('load digits from dataset')
-#digits = load_digits()
+digits = load_digits()
 # print(digits.data.shape)
 # plt.gray()
 # plt.matshow(digits.images[0])
@@ -34,39 +35,33 @@ def training_montage(r, res, W, bias,digits):
 #W, bias = training_montage(100, 0.6, W, bias)
 #f=open('NN_digits.txt','w')
 
-def Create_and_train(dim):
+def Create_and_train(dimensions):
     print('load digits from dataset')
     digits = load_digits()
-    # print(digits.data.shape)
-    # plt.gray()
-    # plt.matshow(digits.images[0])
-    # plt.show()
-    # digits.target[10]
+
 
     # create a Neural Network with random nodes, the layers are created
     # from user input. 64 pixel inputs and 10 different possible outputs
-    dimensions = [20,20]
     print('Creating Neural network with dimensions dimensions {}'.format(dimensions))
 
 
     W, bias = NN_make(dimensions, 64, 10)
     W, bias = training_montage(100, 0.6, W, bias,digits)
-    with open('NN_digits.csv','a') as csvfile:
-        writer=csv.writer(csvfile)
-        for i in range(len(W)):
-            writer.writerow(W[i])
+    print('Accuracy of model:', Accuracy(W,bias,0,200,digits))
+    an=input('Overwrite previous weights? y/n')
+    if an=='y':
+        file_NN='NN_digits.npy'
+        weights_NN=[]
+        weights_NN.append([W,bias])
+        
+        #print(weights_NN)
+        np.save(file_NN, weights_NN,allow_pickle=True)
+def construct_NN(file):
+    Weights=np.load(file, allow_pickle=True)
+    W, bias=Weights[0][0], Weights[0][1]
+    return W,bias
 
-
-def re_make_NN(NN_file):
-    with open(NN_file, 'a') as csvfile:
-        values=csv.reader(csvfile, delimiter=',')
-        for value in values:
-
-            print(value)
-
-
-re_make_NN('NN_digits.csv')
-#Accuracy(W,bias,0,200,digits)
-#print(prediction(W, 211, bias, digits))
+#Create_and_train([30,30])
+W,bias=construct_NN('NN_digits.npy')
 #ans=input('save model?? y/n')
 
